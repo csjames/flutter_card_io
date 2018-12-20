@@ -39,11 +39,18 @@
     }
     
     if ([@"scanCard" isEqualToString:call.method]) {
+
+        _scanViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self];
+
         _scanViewController.delegate = self;
         
         _result = result;
         _arguments = call.arguments;
         
+        _scanViewController.guideColor = [UIColor colorWithRed:10.0f/255.0f
+                green:1.0f/255.0f
+                 blue:79.0f/255.0f
+                alpha:1.0f];
         _scanViewController.scanExpiry = [_arguments objectForKey:@"scanExpiry"] ? [[_arguments objectForKey:@"scanExpiry"] boolValue] : false;
         _scanViewController.collectExpiry = [_arguments objectForKey:@"requireExpiry"] ? [[_arguments objectForKey:@"requireExpiry"] boolValue] : false;
         _scanViewController.collectCVV = [_arguments objectForKey:@"requireCVV"] ? [[_arguments objectForKey:@"requireCVV"] boolValue] : false;
@@ -57,6 +64,7 @@
         _scanViewController.suppressScanConfirmation = [_arguments objectForKey:@"suppressConfirmation"] ? [[_arguments objectForKey:@"suppressConfirmation"] boolValue] : false;
         _scanViewController.disableManualEntryButtons = [_arguments objectForKey:@"suppressManualEntry"] ? [[_arguments objectForKey:@"suppressManualEntry"] boolValue] : false;
         
+
         [_viewController presentViewController:_scanViewController animated:YES completion:nil];
     } else {
         result(FlutterMethodNotImplemented);
@@ -103,9 +111,11 @@
         @"cvv": ObjectOrNull(info.cvv),
         @"postalCode": ObjectOrNull(info.postalCode)
     });
-    [_scanViewController dismissViewControllerAnimated:YES completion:nil];
+
     _result = nil;
     _arguments = nil;
+    
+    [_scanViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 static id ObjectOrNull(id object) {
